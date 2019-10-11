@@ -13,10 +13,7 @@ public class Author {
     private Long id;
 
     @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
+    private String name;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
