@@ -1,13 +1,18 @@
 package com.example.bookstoreapi.web.controller;
 
+import com.example.bookstoreapi.entity.Author;
 import com.example.bookstoreapi.service.AuthorService;
 import com.example.bookstoreapi.web.dto.author.AuthorCreateOrUpdateDTO;
 import com.example.bookstoreapi.web.dto.author.AuthorInfoDTO;
 import com.example.bookstoreapi.web.dto.book.BasicBookInfoDTO;
+import com.example.bookstoreapi.web.error.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -38,14 +43,22 @@ public class AuthorController {
     }
 
     @PostMapping(value = "/authors")
-    public ResponseEntity<Long> createAuthor(@RequestBody AuthorCreateOrUpdateDTO dto) {
+    public ResponseEntity<Long> createAuthor(@Valid @RequestBody AuthorCreateOrUpdateDTO dto,
+                                             BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            throw new InvalidInputException(bindingResult.getFieldErrors());
+        }
         Long id = authorService.createAuthorFrom(dto);
         return ResponseEntity.ok(id);
     }
 
     @PutMapping(value = "/authors/{id}")
     public ResponseEntity<Long> updateAuthor(@PathVariable Long id,
-                                             @RequestBody AuthorCreateOrUpdateDTO dto) {
+                                             @Valid @RequestBody AuthorCreateOrUpdateDTO dto,
+                                             BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            throw new InvalidInputException(bindingResult.getFieldErrors());
+        }
         authorService.updateAuthor(id, dto);
         return ResponseEntity.ok(id);
     }

@@ -1,6 +1,7 @@
 package com.example.bookstoreapi.web.controller;
 
 import com.example.bookstoreapi.web.error.ErrorResponse;
+import com.example.bookstoreapi.web.error.InvalidInputException;
 import com.example.bookstoreapi.web.error.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,14 @@ public class CustomExceptionHandler {
         details.add(ex.getLocalizedMessage());
         ErrorResponse error = new ErrorResponse("Resource Not Found", details);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    public final ResponseEntity<Object> handleInvalidInputException(InvalidInputException ex, WebRequest request) {
+        List<String> details = new ArrayList<>();
+        details.add(ex.getLocalizedMessage());
+        details.addAll(ex.getDetails());
+        ErrorResponse error = new ErrorResponse("Invalid Input", details);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
