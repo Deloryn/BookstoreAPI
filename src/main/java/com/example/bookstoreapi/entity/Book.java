@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -17,15 +18,21 @@ public class Book {
     private String title;
 
     @Column(nullable = false)
+    private Date releaseDate;
+
+    @Column(nullable = false)
+    private Integer numberOfPages;
+
+    private String description;
+
+    @Column(nullable = false)
     private String imgUrl;
 
     @Column(nullable = false)
-    private Boolean isAvailable;
+    private BigDecimal price;
 
     @Column(nullable = false)
-    private BigDecimal regularPrice;
-
-    private BigDecimal discountedPrice;
+    private Integer numberInStore;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
@@ -54,7 +61,17 @@ public class Book {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "bookdetails_id", referencedColumnName = "id")
-    private BookDetails details;
+    public void updateData(Book another) {
+        title = another.title;
+        categories = another.categories;
+        authors = another.authors;
+        description = another.description;
+        releaseDate = another.releaseDate;
+        numberInStore = another.numberInStore;
+        numberOfPages = another.numberOfPages;
+        reviews = another.reviews;
+        price = another.price;
+        imgUrl = another.imgUrl;
+        publisher = another.publisher;
+    }
 }
