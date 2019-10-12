@@ -86,8 +86,8 @@ public class BookService {
         book.setNumberInStore(dto.getNumberInStore());
         book.setNumberOfPages(dto.getNumberOfPages());
 
-        List<Author> authors = getAuthorsByIds(dto.getAuthorIds());
-        List<Category> categories = getCategoriesByIds(dto.getCategoryIds());
+        List<Author> authors = getAuthorsByIds(dto.getAuthorsIds());
+        List<Category> categories = getCategoriesByIds(dto.getCategoriesIds());
         Publisher publisher = getPublisherById(dto.getPublisherId());
 
         book.setAuthors(authors);

@@ -20,10 +20,10 @@ public class BookCreateOrUpdateDTO {
     private BigDecimal price;
 
     @NotNull
-    private List<Long> authorIds;
+    private List<Long> authorsIds;
 
     @NotNull
-    private List<Long> categoryIds;
+    private List<Long> categoriesIds;
 
     @NotNull
     private Long publisherId;
