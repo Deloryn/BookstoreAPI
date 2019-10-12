@@ -1,8 +1,9 @@
 package com.example.bookstoreapi.web.controller;
 
-import com.example.bookstoreapi.entity.Book;
 import com.example.bookstoreapi.service.BookService;
-import com.example.bookstoreapi.web.error.ResourceNotFoundException;
+import com.example.bookstoreapi.web.dto.book.BasicBookInfoDTO;
+import com.example.bookstoreapi.web.dto.book.BookCreateOrUpdateDTO;
+import com.example.bookstoreapi.web.dto.book.DetailedBookInfoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,39 +19,40 @@ public class BookController {
         this.bookService = bookService;
     }
 
-    @PostMapping(value = "/books")
-    public ResponseEntity<Book> create(@RequestBody Book book) {
-        bookService.save(book);
-        return ResponseEntity.ok(book);
-    }
-
     @GetMapping(value = "/books")
-    public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookService.getAllBooks();
-        return ResponseEntity.ok(books);
+    public ResponseEntity<List<BasicBookInfoDTO>> getAllBooksBasicInfos() {
+        List<BasicBookInfoDTO> dtos = bookService.getAllBooksBasicInfos();
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping(value = "/books/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) throws ResourceNotFoundException {
-        Book book = bookService.getBookById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Book.class, id));
-        return ResponseEntity.ok(book);
+    public ResponseEntity<BasicBookInfoDTO> getBasicBookInfoById(@PathVariable Long id) {
+        BasicBookInfoDTO dto = bookService.getBasicBookInfoById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping(value = "/books/{id}/details")
+    public ResponseEntity<DetailedBookInfoDTO> getDetailedBookInfoById(@PathVariable Long id) {
+        DetailedBookInfoDTO dto = bookService.getDetailedBookInfoById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping(value = "/books")
+    public ResponseEntity<Long> createBook(@RequestBody BookCreateOrUpdateDTO dto) {
+        Long id = bookService.createBookFrom(dto);
+        return ResponseEntity.ok(id);
     }
 
     @PutMapping(value = "/books/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id,
-                           @RequestBody Book updatedBook) throws ResourceNotFoundException {
-        Book existingBook = bookService.getBookById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Book.class, id));
-        bookService.updateExistingBook(existingBook, updatedBook);
-        return ResponseEntity.ok(updatedBook);
+    public ResponseEntity<Long> updateBook(@PathVariable Long id,
+                                           @RequestBody BookCreateOrUpdateDTO dto) {
+        bookService.updateBook(id, dto);
+        return ResponseEntity.ok(id);
     }
 
     @DeleteMapping(value = "/books/{id}")
-    public ResponseEntity<Book> deleteBook(@PathVariable Long id) throws ResourceNotFoundException {
-        Book existingBook = bookService.getBookById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Book.class, id));
-        bookService.deleteBook(existingBook);
-        return ResponseEntity.ok(existingBook);
+    public ResponseEntity<Long> deleteBook(@PathVariable Long id) {
+        bookService.deleteBook(id);
+        return ResponseEntity.ok(id);
     }
 }
