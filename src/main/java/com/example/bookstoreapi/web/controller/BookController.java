@@ -4,10 +4,13 @@ import com.example.bookstoreapi.service.BookService;
 import com.example.bookstoreapi.web.dto.book.BasicBookInfoDTO;
 import com.example.bookstoreapi.web.dto.book.BookCreateOrUpdateDTO;
 import com.example.bookstoreapi.web.dto.book.DetailedBookInfoDTO;
+import com.example.bookstoreapi.web.error.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -38,14 +41,22 @@ public class BookController {
     }
 
     @PostMapping(value = "/books")
-    public ResponseEntity<Long> createBook(@RequestBody BookCreateOrUpdateDTO dto) {
+    public ResponseEntity<Long> createBook(@Valid @RequestBody BookCreateOrUpdateDTO dto,
+                                           BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            throw new InvalidInputException(bindingResult.getFieldErrors());
+        }
         Long id = bookService.createBookFrom(dto);
         return ResponseEntity.ok(id);
     }
 
     @PutMapping(value = "/books/{id}")
     public ResponseEntity<Long> updateBook(@PathVariable Long id,
-                                           @RequestBody BookCreateOrUpdateDTO dto) {
+                                           @Valid @RequestBody BookCreateOrUpdateDTO dto,
+                                           BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            throw new InvalidInputException(bindingResult.getFieldErrors());
+        }
         bookService.updateBook(id, dto);
         return ResponseEntity.ok(id);
     }
