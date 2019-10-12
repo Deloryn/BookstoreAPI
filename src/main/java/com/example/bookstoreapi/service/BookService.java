@@ -60,7 +60,6 @@ public class BookService {
 
     public void updateBook(Long id, BookCreateOrUpdateDTO dto) {
         Book another = mapToBook(dto);
-
         Book existingBook = getBookById(id);
         existingBook.updateData(another);
         save(existingBook);
