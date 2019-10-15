@@ -1,6 +1,5 @@
 package com.example.bookstoreapi.web.controller;
 
-import com.example.bookstoreapi.entity.Author;
 import com.example.bookstoreapi.service.AuthorService;
 import com.example.bookstoreapi.web.dto.author.AuthorCreateOrUpdateDTO;
 import com.example.bookstoreapi.web.dto.author.AuthorInfoDTO;
@@ -8,7 +7,6 @@ import com.example.bookstoreapi.web.dto.book.BasicBookInfoDTO;
 import com.example.bookstoreapi.web.error.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
