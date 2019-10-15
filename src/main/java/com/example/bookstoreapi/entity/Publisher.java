@@ -15,6 +15,14 @@ public class Publisher {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "publisher",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<Book> books;
+
+    public void updateData(Publisher another) {
+        name = another.name;
+        books = another.books;
+    }
 }
