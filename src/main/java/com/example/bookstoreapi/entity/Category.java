@@ -20,4 +20,9 @@ public class Category {
             CascadeType.MERGE
     })
     private List<Book> books;
+
+    public void updateData(Category another) {
+        name = another.name;
+        books = another.books;
+    }
 }
