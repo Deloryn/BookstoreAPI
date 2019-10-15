@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,12 +35,14 @@ public class AuthorService {
     }
 
     public AuthorInfoDTO getAuthorInfoById(Long id) {
-        Author author = getAuthorById(id);
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Author.class, id));
         return new AuthorInfoDTO(author);
     }
 
     public List<BasicBookInfoDTO> getAuthorBooksInfo(Long id) {
-        return getAuthorById(id)
+        return authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Author.class, id))
                 .getBooks()
                 .stream()
                 .map(BasicBookInfoDTO::new)
@@ -49,21 +50,23 @@ public class AuthorService {
     }
 
     public void deleteAuthor(Long id) {
-        Author author = getAuthorById(id);
-        delete(author);
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Author.class, id));
+        authorRepository.delete(author);
     }
 
     public Long createAuthorFrom(AuthorCreateOrUpdateDTO dto) {
         Author author = mapToAuthor(dto);
-        save(author);
+        authorRepository.save(author);
         return author.getId();
     }
 
     public void updateAuthor(Long id, AuthorCreateOrUpdateDTO dto) {
-        Author another = mapToAuthor(dto);
-        Author existingAuthor = getAuthorById(id);
-        existingAuthor.updateData(another);
-        save(existingAuthor);
+        Author anotherAutor = mapToAuthor(dto);
+        Author existingAuthor = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Author.class, id));
+        existingAuthor.updateData(anotherAutor);
+        authorRepository.save(existingAuthor);
     }
 
     private Author mapToAuthor(AuthorCreateOrUpdateDTO dto) {
@@ -79,30 +82,8 @@ public class AuthorService {
     private List<Book> getBooksByIds(List<Long> booksIds) {
         return booksIds
                 .stream()
-                .map(id -> getBookIfExists(id)
+                .map(id -> bookRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException(Book.class, id)))
                 .collect(Collectors.toList());
-    }
-
-    private Optional<Book> getBookIfExists(Long id) {
-        Book book = bookRepository.getOne(id);
-        return Optional.ofNullable(book);
-    }
-
-    private Author getAuthorById(Long id) {
-        return getAuthorIfExists(id).orElseThrow(() -> new ResourceNotFoundException(Author.class, id));
-    }
-
-    private Optional<Author> getAuthorIfExists(Long id) {
-        Author author = authorRepository.getOne(id);
-        return Optional.ofNullable(author);
-    }
-
-    private void save(Author author) {
-        authorRepository.save(author);
-    }
-
-    private void delete(Author author) {
-        authorRepository.delete(author);
     }
 }
